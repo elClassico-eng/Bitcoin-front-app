@@ -1,9 +1,10 @@
 import React from "react";
+
 import { Layout } from "antd";
 
 import { Header } from "./componets/Header";
 import { Content } from "./componets/Content";
-import { Sider } from "./componets/Sider";
+import { Aside } from "./componets/Aside";
 
 export const App = () => {
     return (
@@ -11,7 +12,7 @@ export const App = () => {
             <Header />
             <Layout>
                 <Content />
-                <Sider />
+                <Aside />
             </Layout>
         </Layout>
     );
