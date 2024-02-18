@@ -37,12 +37,14 @@ export const Header = () => {
                 Add Assets
             </Button>
             <Drawer
-                title="Basic Drawer"
+                title="Add Assets"
+                style={{ width: "600px" }}
                 placement="left"
+                destroyOnClose
                 onClose={() => setDrawer(false)}
                 open={drawer}
             >
-                <AssetForm />
+                <AssetForm onClose={() => setDrawer(false)} />
             </Drawer>
             <Select
                 style={{

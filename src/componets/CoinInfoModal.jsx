@@ -1,19 +1,11 @@
 import React from "react";
 import { Tag, Typography, Flex } from "antd";
+import { CoinInfo } from "./CoinInfo/CoinInfo";
 
 export const CoinInfoModal = ({ coin }) => {
     return (
         <>
-            <Flex gap="small" justify="center" align="center">
-                <img
-                    style={{ width: "40px" }}
-                    src={coin.icon}
-                    alt={coin.name}
-                />
-                <Typography.Title level={2} style={{ margin: "0" }}>
-                    ({coin.symbol}){coin.name}
-                </Typography.Title>
-            </Flex>
+            <CoinInfo coin={coin} />
 
             <Typography.Paragraph>
                 <Typography.Title level={4}>
