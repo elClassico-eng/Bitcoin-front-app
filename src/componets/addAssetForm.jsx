@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Form,
-    Typography,
     Button,
-    Flex,
     Select,
     Space,
     Divider,
@@ -12,25 +10,36 @@ import {
     Result,
 } from "antd";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectCrypto } from "../redux/slice/sliceCrypto";
+import { setSelectedCoin } from "../redux/slice/sliceAssets";
 import { useForm } from "antd/es/form/Form";
 
 import { CoinInfo } from "./CoinInfo/CoinInfo";
 
 export const AssetForm = ({ onClose }) => {
     const { crypto } = useSelector(selectCrypto);
-    const [coin, setCoin] = useState(null);
     const [form] = useForm();
-    const [select, setSelect] = useState(false);
-    const [submit, setSubmit] = useState(false);
+    const dispatch = useDispatch();
+
+    const [coin, setCoin] = useState([]); //монетка
+    const [select, setSelect] = useState(false); //выбранная монетка
+    const [submit, setSubmit] = useState(false); //успешная отправка или нет
+    const [resultData, setResultData] = useState(null);
 
     const getSelectedCoin = (value) => {
-        setCoin(crypto.find((item) => item.id === value));
+        console.log(value);
+        setCoin(crypto.flat().map((ass) => console.log(ass.id)));
+        // setCoin(crypto.flat().find((item) => item.id === value));
     };
 
+    useEffect(() => {
+        dispatch(setSelectedCoin(resultData));
+    }, [dispatch]);
+
     const onFinish = (value) => {
-        console.log(value);
+        setResultData(value);
+        setSubmit(true);
     };
 
     const validateMessage = {
@@ -44,12 +53,14 @@ export const AssetForm = ({ onClose }) => {
     };
 
     const handleAmountChange = (value) => {
+        console.log(value);
         const price = form.getFieldValue("price");
         form.setFieldsValue({
             totalPrice: +(value * price).toFixed(2),
         });
     };
     const handlePriceChange = (value) => {
+        console.log(value);
         const amount = form.getFieldValue("amount");
         form.setFieldsValue({
             totalPrice: +(value * amount).toFixed(2),
@@ -62,7 +73,7 @@ export const AssetForm = ({ onClose }) => {
                     width: "100%",
                 }}
                 open={select}
-                onSelect={(value) => getSelectedCoin(value)}
+                onSelect={getSelectedCoin}
                 onClick={() => setSelect((prev) => !prev)}
                 value="Add asset"
                 options={crypto.map((coin) => ({
@@ -89,7 +100,7 @@ export const AssetForm = ({ onClose }) => {
             <Result
                 status="success"
                 title="The purchase was completed successfully!"
-                subTitle={`Added ${42} of ${coin.id} to price ${3}`}
+                subTitle={`Added ${form.getFieldValue("amount")} of ${coin.id} to price ${form.getFieldValue("price")}`}
                 extra={[
                     <Button onClick={onClose} type="primary" key="home">
                         Home
@@ -119,7 +130,7 @@ export const AssetForm = ({ onClose }) => {
                     price: +coin.price.toFixed(2),
                 }}
                 validateMessages={validateMessage}
-                onFinish={(value) => onFinish(value)}
+                onFinish={onFinish}
                 onFinishFailed={() =>
                     alert("Не удалось добавить монету в портфель.")
                 }
@@ -167,11 +178,7 @@ export const AssetForm = ({ onClose }) => {
                         span: 16,
                     }}
                 ></Form.Item>
-                <Button
-                    type="primary"
-                    onClick={() => setSubmit(true)}
-                    htmlType="submit"
-                >
+                <Button type="primary" htmlType="submit">
                     Add Assets
                 </Button>
             </Form>

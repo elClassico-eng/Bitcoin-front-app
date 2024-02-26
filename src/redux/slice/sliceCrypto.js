@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const fetchCrypto = createAsyncThunk("crypto/fetchCrypto", async () => {
-    try {
+export const fetchCrypto = createAsyncThunk(
+    "cryptoCoin/fetchCrypto",
+    async () => {
         const options = {
             method: "GET",
             url: "https://openapiv1.coinstats.app/coins",
@@ -13,11 +14,8 @@ export const fetchCrypto = createAsyncThunk("crypto/fetchCrypto", async () => {
         };
         const { data } = await axios.request(options);
         return data.result;
-    } catch (err) {
-        console.log(err);
-        alert("Ошибка при загрузке данных");
     }
-});
+);
 
 const initialState = {
     crypto: [],
@@ -26,7 +24,7 @@ const initialState = {
 };
 
 const sliceCrypto = createSlice({
-    name: "crypto",
+    name: "cryptoCoin",
     initialState,
     extraReducers: (builder) => {
         builder
@@ -34,7 +32,7 @@ const sliceCrypto = createSlice({
                 state.isLoading = true;
             })
             .addCase(fetchCrypto.fulfilled, (state, action) => {
-                state.crypto = action.payload;
+                state.crypto.push(action.payload);
                 state.isLoading = false;
             })
             .addCase(fetchCrypto.rejected, (state) => {
@@ -44,6 +42,6 @@ const sliceCrypto = createSlice({
     },
 });
 
-export const selectCrypto = (state) => state.crypto;
+export const selectCrypto = (state) => state.cryptoCoin;
 
 export default sliceCrypto.reducer;

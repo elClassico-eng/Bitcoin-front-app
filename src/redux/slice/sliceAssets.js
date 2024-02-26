@@ -1,17 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { assetsData } from "../../data";
+import axios from "axios";
 
-export const fetchAssets = createAsyncThunk("assets/fetchCrypto", async () => {
-    try {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(assetsData);
-            }, 2000);
-        });
-    } catch (err) {
-        console.log(err);
-        throw err;
-    }
+export const fetchAssets = createAsyncThunk("assets/fetchAssets", async () => {
+    const { data } = await axios.get(
+        "https://65d2fe7c522627d50107c477.mockapi.io/Assets"
+    );
+    return data;
 });
 
 const initialState = {
@@ -23,6 +17,11 @@ const initialState = {
 const sliceAssets = createSlice({
     name: "assets",
     initialState,
+    reducers: {
+        setSelectedCoin: (state, action) => {
+            state.assetsData.push(action.payload);
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchAssets.pending, (state) => {
@@ -30,7 +29,7 @@ const sliceAssets = createSlice({
                 state.error = null;
             })
             .addCase(fetchAssets.fulfilled, (state, action) => {
-                state.assetsData = Object.values(action.payload);
+                state.assetsData.push(action.payload);
                 state.isLoading = false;
             })
             .addCase(fetchAssets.rejected, (state) => {
@@ -39,6 +38,8 @@ const sliceAssets = createSlice({
             });
     },
 });
+
+export const { setSelectedCoin } = sliceAssets.actions;
 
 export const selectAssets = (state) => state.assets;
 
